@@ -2,10 +2,11 @@
 
 import rclpy
 import math
+from rclpy.clock import Duration
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry  # Import Odometry message type
-from nav2_simple_commander.robot_navigator import BasicNavigator, Duration, TaskResult
+from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from tf_transformations import quaternion_from_euler, euler_from_quaternion
 
 # Define your desired goal coordinates and orientation (in degrees)
