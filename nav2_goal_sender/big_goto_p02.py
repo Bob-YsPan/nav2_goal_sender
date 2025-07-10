@@ -9,12 +9,12 @@ from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from tf_transformations import quaternion_from_euler, euler_from_quaternion
 
 # Define your desired goal coordinates and orientation (in degrees)
-goal_x = 4.58
-goal_y = 0.65
+goal_x = 1.67
+goal_y = -0.22
 # Format for yaw
 # quaternion [x, y, z, w]
 # degree [deg]
-goal_yaw = [0.0, 0.0, -0.99, 0.12]
+goal_yaw = [0.0, 0.0, 0.14, 0.99]
 quaternion = True
 
 class SimpleGoalNavigator(Node):
