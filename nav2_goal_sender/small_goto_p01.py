@@ -24,35 +24,35 @@ class SimpleGoalNavigator(Node):
         super().__init__('simple_goal_navigator')
         self.navigator = BasicNavigator()
 
-        self.current_robot_pose_odom = None
-        self.pose_received = False
+        # self.current_robot_pose_odom = None
+        # self.pose_received = False
 
-        # Create a subscriber to the /odom topic
-        self.odom_subscriber = self.create_subscription(
-            Odometry,                  # Type of message /odom publishes
-            '/odom',                   # Topic name
-            self.odom_callback,        # Callback function
-            10                         # QoS history depth
-        )
-        self.get_logger().info('Subscribing to /odom to get current robot position...')
+        # # Create a subscriber to the /odom topic
+        # self.odom_subscriber = self.create_subscription(
+        #     Odometry,                  # Type of message /odom publishes
+        #     '/odom',                   # Topic name
+        #     self.odom_callback,        # Callback function
+        #     10                         # QoS history depth
+        # )
+        # self.get_logger().info('Subscribing to /odom to get current robot position...')
 
-        # Wait until a valid initial pose is received from Odometry
-        self.get_logger().info('Waiting for Odometry pose to be received...')
-        while not self.pose_received and rclpy.ok():
-            rclpy.spin_once(self, timeout_sec=0.1)
+        # # Wait until a valid initial pose is received from Odometry
+        # self.get_logger().info('Waiting for Odometry pose to be received...')
+        # while not self.pose_received and rclpy.ok():
+        #     rclpy.spin_once(self, timeout_sec=0.1)
         
-        if not rclpy.ok():
-            self.get_logger().error("ROS2 context shut down before initial pose was received.")
-            return
+        # if not rclpy.ok():
+        #     self.get_logger().error("ROS2 context shut down before initial pose was received.")
+        #     return
 
-        self.get_logger().info('Odometry pose received! Setting initial pose for BasicNavigator.')
+        # self.get_logger().info('Odometry pose received! Setting initial pose for BasicNavigator.')
         
-        # Convert Odometry message's pose to PoseStamped for setInitialPose
-        initial_pose_stamped = PoseStamped()
-        initial_pose_stamped.header = self.current_robot_pose_odom.header
-        initial_pose_stamped.pose = self.current_robot_pose_odom.pose.pose
+        # # Convert Odometry message's pose to PoseStamped for setInitialPose
+        # initial_pose_stamped = PoseStamped()
+        # initial_pose_stamped.header = self.current_robot_pose_odom.header
+        # initial_pose_stamped.pose = self.current_robot_pose_odom.pose.pose
 
-        self.navigator.setInitialPose(initial_pose_stamped)
+        # self.navigator.setInitialPose(initial_pose_stamped)
 
         # Wait for Nav2 to become active
         # self.get_logger().info('Waiting for Nav2 to become active...')
@@ -67,9 +67,9 @@ class SimpleGoalNavigator(Node):
 
     def navigate_to_goal(self, x, y, yaw, is_quaternion = False):
         
-        if not self.pose_received:
-            self.get_logger().error("Cannot navigate: Initial pose not received from odometry yet.")
-            return
+        # if not self.pose_received:
+        #     self.get_logger().error("Cannot navigate: Initial pose not received from odometry yet.")
+        #     return
         
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'map'
