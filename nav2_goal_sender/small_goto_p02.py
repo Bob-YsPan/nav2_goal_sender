@@ -79,7 +79,7 @@ class SimpleGoalNavigator(Node):
         yaw_degree = 0.0;
 
         if(is_quaternion):
-            yaw_degree = math.degrees(euler_from_quaternion([yaw[0], yaw[1], yaw[2], yaw[3]]))
+            yaw_degree = math.degrees(euler_from_quaternion([yaw[0], yaw[1], yaw[2], yaw[3]])[2])
             goal_pose.pose.orientation.x = yaw[0]
             goal_pose.pose.orientation.y = yaw[1]
             goal_pose.pose.orientation.z = yaw[2]
