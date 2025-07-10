@@ -55,9 +55,9 @@ class SimpleGoalNavigator(Node):
         self.navigator.setInitialPose(initial_pose_stamped)
 
         # Wait for Nav2 to become active
-        self.get_logger().info('Waiting for Nav2 to become active...')
-        self.navigator.waitUntilNav2Active()
-        self.get_logger().info('Nav2 is active! Sending goal...')
+        # self.get_logger().info('Waiting for Nav2 to become active...')
+        # self.navigator.waitUntilNav2Active()
+        # self.get_logger().info('Nav2 is active! Sending goal...')
 
     def odom_callback(self, msg):
         # Callback function to store the latest robot pose from odometry.
