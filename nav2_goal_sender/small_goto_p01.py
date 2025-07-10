@@ -5,7 +5,7 @@ import math
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
 from nav_msgs.msg import Odometry  # Import Odometry message type
-from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
+from nav2_simple_commander.robot_navigator import BasicNavigator, Duration, TaskResult
 from tf_transformations import quaternion_from_euler, euler_from_quaternion
 
 # Define your desired goal coordinates and orientation (in degrees)
@@ -101,7 +101,7 @@ class SimpleGoalNavigator(Node):
             i = i + 1
             feedback = self.navigator.getFeedback()
             if feedback and i % 5 == 0:
-                estimated_time_sec = feedback.estimated_time_remaining.nanoseconds / 1e9
+                estimated_time_sec = Duration.from_msg(feedback.estimated_time_remaining).nanoseconds / 1e9
                 self.get_logger().info(f'Estimated time remaining: {estimated_time_sec:.2f} seconds. Current speed: {feedback.current_speed:.2f} m/s')
 
         result = self.navigator.getResult()
