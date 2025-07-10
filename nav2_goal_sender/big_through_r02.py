@@ -67,6 +67,7 @@ class ThroughPosesNavigator(Node):
                 pose.pose.orientation.y = qy
                 pose.pose.orientation.z = qz
                 pose.pose.orientation.w = qw
+            self.get_logger().info(f'Pose added X:{x}, Y:{y}, Yaw:{yaw_degree} degrees.')
             goal_poses.append(pose)
 
         self.get_logger().info(f'Attempting to navigate through {len(goal_poses)} poses.')

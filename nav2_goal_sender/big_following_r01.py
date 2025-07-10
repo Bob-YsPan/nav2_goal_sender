@@ -66,6 +66,7 @@ class WaypointFollowerNavigator(Node):
                 pose.pose.orientation.y = qy
                 pose.pose.orientation.z = qz
                 pose.pose.orientation.w = qw
+            self.get_logger().info(f'Pose added X:{x}, Y:{y}, Yaw:{yaw_degree} degrees.')
             waypoints.append(pose)
 
         self.get_logger().info(f'Attempting to follow {len(waypoints)} waypoints.')
