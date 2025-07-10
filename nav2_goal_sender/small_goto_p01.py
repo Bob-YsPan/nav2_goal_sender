@@ -101,7 +101,8 @@ class SimpleGoalNavigator(Node):
             i = i + 1
             feedback = self.navigator.getFeedback()
             if feedback and i % 5 == 0:
-                self.get_logger().info(f'Estimated time remaining: {feedback.estimated_time_remaining:.2f} seconds. Current speed: {feedback.current_speed:.2f} m/s')
+                estimated_time_sec = feedback.estimated_time_remaining.nanoseconds / 1e9
+                self.get_logger().info(f'Estimated time remaining: {estimated_time_sec:.2f} seconds. Current speed: {feedback.current_speed:.2f} m/s')
 
         result = self.navigator.getResult()
         if result == TaskResult.SUCCEEDED:
