@@ -21,13 +21,13 @@ class SimpleGoalNavigator(Node):
         # Set the initial pose of the robot if not already localized (optional)
         # This is useful if your robot starts at an unknown location.
         # Otherwise, if Nav2 is already running and localized, you can skip this.
-        initial_pose = PoseStamped()
-        initial_pose.header.frame_id = 'map'
-        initial_pose.header.stamp = self.navigator.get_clock().now().to_msg()
-        initial_pose.pose.position.x = 0.0  # Set your robot's initial X position
-        initial_pose.pose.position.y = 0.0  # Set your robot's initial Y position
-        initial_pose.pose.orientation.w = 1.0 # No rotation
-        self.navigator.setInitialPose(initial_pose)
+        # initial_pose = PoseStamped()
+        # initial_pose.header.frame_id = 'map'
+        # initial_pose.header.stamp = self.navigator.get_clock().now().to_msg()
+        # initial_pose.pose.position.x = 0.0  # Set your robot's initial X position
+        # initial_pose.pose.position.y = 0.0  # Set your robot's initial Y position
+        # initial_pose.pose.orientation.w = 1.0 # No rotation
+        # self.navigator.setInitialPose(initial_pose)
 
         # Wait for Nav2 to become active
         self.get_logger().info('Waiting for Nav2 to become active...')

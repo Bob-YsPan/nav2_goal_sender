@@ -14,13 +14,13 @@ class ThroughPosesNavigator(Node):
         self.navigator = BasicNavigator()
 
         # Set the initial pose if not already localized
-        initial_pose = PoseStamped()
-        initial_pose.header.frame_id = 'map'
-        initial_pose.header.stamp = self.navigator.get_clock().now().to_msg()
-        initial_pose.pose.position.x = 0.0
-        initial_pose.pose.position.y = 0.0
-        initial_pose.pose.orientation.w = 1.0
-        self.navigator.setInitialPose(initial_pose)
+        # initial_pose = PoseStamped()
+        # initial_pose.header.frame_id = 'map'
+        # initial_pose.header.stamp = self.navigator.get_clock().now().to_msg()
+        # initial_pose.pose.position.x = 0.0
+        # initial_pose.pose.position.y = 0.0
+        # initial_pose.pose.orientation.w = 1.0
+        # self.navigator.setInitialPose(initial_pose)
 
         self.get_logger().info('Waiting for Nav2 to become active...')
         self.navigator.waitUntilNav2Active()
