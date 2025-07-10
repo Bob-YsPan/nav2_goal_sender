@@ -1,2 +1,2 @@
-# nav2_goal_sender
-Goal sender for Nav2
+# Nav2 Goal Sender
+Goal sender for Nav2, for my research need!
