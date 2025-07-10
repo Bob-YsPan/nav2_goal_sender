@@ -4,6 +4,7 @@ import rclpy
 import math
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
+from nav_msgs.msg import Odometry  # Import Odometry message type
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from tf_transformations import quaternion_from_euler, euler_from_quaternion
 
@@ -22,23 +23,53 @@ class SimpleGoalNavigator(Node):
         super().__init__('simple_goal_navigator')
         self.navigator = BasicNavigator()
 
-        # Set the initial pose of the robot if not already localized (optional)
-        # This is useful if your robot starts at an unknown location.
-        # Otherwise, if Nav2 is already running and localized, you can skip this.
-        # initial_pose = PoseStamped()
-        # initial_pose.header.frame_id = 'map'
-        # initial_pose.header.stamp = self.navigator.get_clock().now().to_msg()
-        # initial_pose.pose.position.x = 0.0  # Set your robot's initial X position
-        # initial_pose.pose.position.y = 0.0  # Set your robot's initial Y position
-        # initial_pose.pose.orientation.w = 1.0 # No rotation
-        # self.navigator.setInitialPose(initial_pose)
+        self.current_robot_pose_odom = None
+        self.pose_received = False
+
+        # Create a subscriber to the /odom topic
+        self.odom_subscriber = self.create_subscription(
+            Odometry,                  # Type of message /odom publishes
+            '/odom',                   # Topic name
+            self.odom_callback,        # Callback function
+            10                         # QoS history depth
+        )
+        self.get_logger().info('Subscribing to /odom to get current robot position...')
+
+        # Wait until a valid initial pose is received from Odometry
+        self.get_logger().info('Waiting for Odometry pose to be received...')
+        while not self.pose_received and rclpy.ok():
+            rclpy.spin_once(self, timeout_sec=0.1)
+        
+        if not rclpy.ok():
+            self.get_logger().error("ROS2 context shut down before initial pose was received.")
+            return
+
+        self.get_logger().info('Odometry pose received! Setting initial pose for BasicNavigator.')
+        
+        # Convert Odometry message's pose to PoseStamped for setInitialPose
+        initial_pose_stamped = PoseStamped()
+        initial_pose_stamped.header = self.current_robot_pose_odom.header
+        initial_pose_stamped.pose = self.current_robot_pose_odom.pose.pose
+
+        self.navigator.setInitialPose(initial_pose_stamped)
 
         # Wait for Nav2 to become active
         self.get_logger().info('Waiting for Nav2 to become active...')
         self.navigator.waitUntilNav2Active()
         self.get_logger().info('Nav2 is active! Sending goal...')
 
+    def odom_callback(self, msg):
+        # Callback function to store the latest robot pose from odometry.
+        self.current_robot_pose_odom = msg
+        self.pose_received = True
+        self.get_logger().info(f"Received odom pose: X={msg.pose.pose.position.x:.2f}, Y={msg.pose.pose.position.y:.2f}")
+
     def navigate_to_goal(self, x, y, yaw, is_quaternion = False):
+        
+        if not self.pose_received:
+            self.get_logger().error("Cannot navigate: Initial pose not received from odometry yet.")
+            return
+        
         goal_pose = PoseStamped()
         goal_pose.header.frame_id = 'map'
         goal_pose.header.stamp = self.navigator.get_clock().now().to_msg()
