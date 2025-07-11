@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import threading
 import rclpy
 import math
 from rclpy.clock import Duration
@@ -75,7 +76,7 @@ class SimpleGoalNavigator(Node):
     def __init__(self):
         super().__init__('simple_goal_navigator')
         self.navigator = BasicNavigator()
-        self.transform_lookup = MapToBaseLinkTransform()
+        self.transform_lookup_node = MapToBaseLinkTransform()
         
         # 如果你的Nav2是從頭啟動的狀態，請使用以下指令，會自動設定原點為Initial Point，並等待Nav2完全啟動！
         # initial_pose = PoseStamped()
@@ -131,7 +132,7 @@ class SimpleGoalNavigator(Node):
         result = self.navigator.getResult()
         if result == TaskResult.SUCCEEDED:
             self.get_logger().info('Goal succeeded!')
-            while not self.transform_lookup.get_transform():
+            while not self.transform_lookup_node.get_transform():
                 self.get_logger().info('Still getting transform...')
         elif result == TaskResult.CANCELED:
             self.get_logger().info('Goal was canceled!')
@@ -142,15 +143,32 @@ class SimpleGoalNavigator(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    navigator_node = SimpleGoalNavigator()
 
-    # Wait user
+    navigator_node = SimpleGoalNavigator()
+    transform_node = navigator_node.transform_lookup_node # Get the reference to the transform node
+
+    # Create a MultiThreadedExecutor to spin both nodes concurrently
+    executor = rclpy.executors.MultiThreadedExecutor()
+    executor.add_node(navigator_node)
+    executor.add_node(transform_node)
+
+    # Use a separate thread for spinning the executor
+    # This allows the main thread to block for user input and then initiate navigation
+    executor_thread = threading.Thread(target=executor.spin, daemon=True)
+    executor_thread.start()
+
+    # Wait for user input to start navigation
     input("Press enter to start navigation!")
 
+    # Now navigate to the goal
     navigator_node.navigate_to_goal(goal_x, goal_y, goal_yaw, quaternion)
 
+    # Clean up
     navigator_node.destroy_node()
+    transform_node.destroy_node()
     rclpy.shutdown()
+    executor.shutdown() # Ensure the executor is also shut down
+    executor_thread.join() # Wait for the executor thread to finish
 
 if __name__ == '__main__':
     main()
