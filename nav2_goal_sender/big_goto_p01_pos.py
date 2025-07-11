@@ -53,9 +53,8 @@ class MapToBaseLinkTransform(Node):
 
             # If you need Euler angles (roll, pitch, yaw) from the quaternion:
             # You'll need to import a quaternion to Euler conversion utility, e.g., from `tf_transformations` (install `ros-humble-tf-transformations`)
-            # import transforms3d.euler as eul
-            # roll, pitch, yaw = eul.quat2euler([qw, qx, qy, qz])
-            # self.get_logger().info(f'  Orientation (Euler): Roll={math.degrees(roll):.2f}, Pitch={math.degrees(pitch):.2f}, Yaw={math.degrees(yaw):.2f} degrees')
+            roll, pitch, yaw = euler_from_quaternion([qw, qx, qy, qz])
+            self.get_logger().info(f'  Orientation (Euler): Roll={math.degrees(roll):.2f}, Pitch={math.degrees(pitch):.2f}, Yaw={math.degrees(yaw):.2f} degrees')
 
         except Exception as ex:
             self.get_logger().warn(f'Could not transform {from_frame} to {to_frame}: {ex}')
