@@ -25,14 +25,18 @@ class MapToBaseLinkTransform(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
 
     def get_transform(self):
-        from_frame = 'map'
-        to_frame = 'base_footprint' # Or 'base_footprint' depending on your robot's setup
+        # CORRECTED:
+        # You want the pose of 'base_footprint' IN the 'map' frame.
+        # So, 'target_frame' is 'map'
+        # And 'source_frame' is 'base_footprint'
+        target_frame = 'map'
+        source_frame = 'base_footprint' 
 
         try:
             # Lookup the transform between the two frames
             transform = self.tf_buffer.lookup_transform(
-                from_frame,
-                to_frame,
+                target_frame,  # The frame you want the pose *in* (your global reference)
+                source_frame,  # The frame whose pose you are looking for (your robot's base)
                 rclpy.time.Time() # Get the latest transform
             )
 
