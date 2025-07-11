@@ -28,10 +28,10 @@ class MapToBaseLinkTransform(Node):
     def get_transform(self):
         # CORRECTED:
         # You want the pose of 'base_footprint' IN the 'map' frame.
-        # So, 'target_frame' is 'map'
-        # And 'source_frame' is 'base_footprint'
-        target_frame = 'map'
-        source_frame = 'base_footprint' 
+        # So, 'target_frame' is 'base_footprint'
+        # And 'source_frame' is 'map'
+        target_frame = 'base_footprint'
+        source_frame = 'map' 
 
         try:
             # Lookup the transform between the two frames
