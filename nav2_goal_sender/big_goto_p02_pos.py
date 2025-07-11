@@ -26,7 +26,7 @@ class MapToBaseLinkTransform(Node):
 
     def get_transform(self):
         from_frame = 'map'
-        to_frame = 'base_link' # Or 'base_footprint' depending on your robot's setup
+        to_frame = 'base_footprint' # Or 'base_footprint' depending on your robot's setup
 
         try:
             # Lookup the transform between the two frames
