@@ -130,7 +130,7 @@ class SimpleGoalNavigator(Node):
         result = self.navigator.getResult()
         if result == TaskResult.SUCCEEDED:
             self.get_logger().info('Goal succeeded!')
-            while not self.transform_lookup.get_transform:
+            while not self.transform_lookup.get_transform():
                 self.get_logger().info('Still getting transform...')
                 sleep(1.0)
         elif result == TaskResult.CANCELED:
