@@ -12,12 +12,12 @@ from tf2_ros import Buffer, TransformListener
 from time import sleep
 
 # Define your desired goal coordinates and orientation (in degrees)
-goal_x = 3.01
-goal_y = 4.76
+goal_x = 3.27
+goal_y = 5.38
 # Format for yaw
 # quaternion [x, y, z, w]
 # degree [deg]
-goal_yaw = [0.0, 0.0, -0.732, 0.681]
+goal_yaw = [0.0, 0.0, -0.82, 0.57]
 quaternion = True
 
 class MapToBaseLinkTransform(Node):
