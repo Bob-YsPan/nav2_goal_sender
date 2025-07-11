@@ -23,6 +23,8 @@ class MapToBaseLinkTransform(Node):
         super().__init__('map_to_base_link_transform')
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
+        
+        self.timer = self.create_timer(1.0, self.get_transform) # Check every 1 second
 
     def get_transform(self):
         # CORRECTED:
@@ -51,17 +53,22 @@ class MapToBaseLinkTransform(Node):
             qz = transform.transform.rotation.z
             qw = transform.transform.rotation.w
 
-            self.get_logger().info(f'Transform {from_frame} to {to_frame}:')
+            self.get_logger().info(f'Robot Pose in {target_frame} frame:')
             self.get_logger().info(f'  Position: x={x:.2f}, y={y:.2f}, z={z:.2f}')
             self.get_logger().info(f'  Orientation (Quaternion): x={qx:.2f}, y={qy:.2f}, z={qz:.2f}, w={qw:.2f}')
 
             # If you need Euler angles (roll, pitch, yaw) from the quaternion:
-            # You'll need to import a quaternion to Euler conversion utility, e.g., from `tf_transformations` (install `ros-humble-tf-transformations`)
-            roll, pitch, yaw = euler_from_quaternion([qw, qx, qy, qz])
+            roll, pitch, yaw = euler_from_quaternion([qx, qy, qz, qw])
             self.get_logger().info(f'  Orientation (Euler): Roll={math.degrees(roll):.2f}, Pitch={math.degrees(pitch):.2f}, Yaw={math.degrees(yaw):.2f} degrees')
 
+            # End this node
+            self.get_logger().info(f'Got the position, destroying...')
+            self.timer.cancel()
+            return
+
         except Exception as ex:
-            self.get_logger().warn(f'Could not transform {from_frame} to {to_frame}: {ex}')
+            # The warning message will now accurately reflect the frames it tried to look up
+            self.get_logger().warn(f'Could not transform {source_frame} to {target_frame}: {ex}')
 
 class SimpleGoalNavigator(Node):
 
