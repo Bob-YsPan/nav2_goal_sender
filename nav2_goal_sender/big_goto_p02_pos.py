@@ -8,6 +8,7 @@ from geometry_msgs.msg import PoseStamped
 from nav2_simple_commander.robot_navigator import BasicNavigator, TaskResult
 from tf_transformations import quaternion_from_euler, euler_from_quaternion
 from tf2_ros import Buffer, TransformListener
+from time import sleep
 
 # Define your desired goal coordinates and orientation (in degrees)
 goal_x = 1.67
@@ -23,8 +24,6 @@ class MapToBaseLinkTransform(Node):
         super().__init__('map_to_base_link_transform')
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
-        
-        self.timer = self.create_timer(1.0, self.get_transform) # Check every 1 second
 
     def get_transform(self):
         # CORRECTED:
@@ -63,12 +62,12 @@ class MapToBaseLinkTransform(Node):
 
             # End this node
             self.get_logger().info(f'Got the position, destroying...')
-            self.timer.cancel()
-            return
+            return True
 
         except Exception as ex:
             # The warning message will now accurately reflect the frames it tried to look up
             self.get_logger().warn(f'Could not transform {source_frame} to {target_frame}: {ex}')
+            return False
 
 class SimpleGoalNavigator(Node):
 
@@ -131,7 +130,9 @@ class SimpleGoalNavigator(Node):
         result = self.navigator.getResult()
         if result == TaskResult.SUCCEEDED:
             self.get_logger().info('Goal succeeded!')
-            self.transform_lookup.get_transform()
+            while not self.transform_lookup.get_transform:
+                self.get_logger().info('Still getting transform...')
+                sleep(1.0)
         elif result == TaskResult.CANCELED:
             self.get_logger().info('Goal was canceled!')
         elif result == TaskResult.FAILED:
