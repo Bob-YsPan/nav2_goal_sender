@@ -28,17 +28,18 @@ class MapToBaseLinkTransform(Node):
     def get_transform(self):
         # CORRECTED:
         # You want the pose of 'base_footprint' IN the 'map' frame.
-        # So, 'target_frame' is 'base_footprint'
-        # And 'source_frame' is 'map'
-        target_frame = 'base_footprint'
-        source_frame = 'map' 
+        # So, 'target_frame' is 'map'
+        # And 'source_frame' is 'base_footprint'
+        target_frame = 'map'
+        source_frame = 'base_footprint' 
 
         try:
             # Lookup the transform between the two frames
             transform = self.tf_buffer.lookup_transform(
                 target_frame,  # The frame you want the pose *in* (your global reference)
                 source_frame,  # The frame whose pose you are looking for (your robot's base)
-                rclpy.time.Time() # Get the latest transform
+                rclpy.time.Time(), # Get the latest transform
+                Duration(seconds=1.0)
             )
 
             # Extract position
@@ -132,7 +133,6 @@ class SimpleGoalNavigator(Node):
             self.get_logger().info('Goal succeeded!')
             while not self.transform_lookup.get_transform():
                 self.get_logger().info('Still getting transform...')
-                sleep(1.0)
         elif result == TaskResult.CANCELED:
             self.get_logger().info('Goal was canceled!')
         elif result == TaskResult.FAILED:
